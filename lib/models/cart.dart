@@ -45,6 +45,7 @@ class Cart with ChangeNotifier {
         ),
       );
     }
+    notifyListeners();
   }
 
   int get itemsCount {

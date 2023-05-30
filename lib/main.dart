@@ -1,4 +1,5 @@
 import 'package:cishop/models/product_list.dart';
+import 'package:cishop/pages/cart_page.dart';
 import 'package:cishop/pages/product_detail_page.dart';
 import 'package:cishop/pages/products_overview_page.dart';
 import 'package:cishop/utils/app_routes.dart';
@@ -36,6 +37,7 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         routes: {
           AppRoutes.PRODUCT_DETAIL: (ctx) => const ProductDetailPage(),
+          AppRoutes.CART: (ctx) => const CartPage(),
         },
       ),
     );
