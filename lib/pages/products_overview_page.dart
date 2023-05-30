@@ -1,10 +1,12 @@
-import 'package:cishop/models/cart.dart';
-import 'package:cishop/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../components/app_drawer.dart';
+import '../components/badge.dart' as badge;
 import '../components/product_grid.dart';
-import 'package:cishop/components/badge.dart' as badge;
+
+import '../models/cart.dart';
+import '../utils/app_routes.dart';
 
 enum FilterOptions {
   Favorite,
@@ -66,6 +68,7 @@ class _ProductsOverviewPageState extends State<ProductsOverviewPage> {
         ],
       ),
       body: ProductGrid(_showFavoriteOnly),
+      drawer: const AppDrawer(),
     );
   }
 }

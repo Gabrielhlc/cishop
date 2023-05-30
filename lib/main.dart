@@ -1,5 +1,7 @@
+import 'package:cishop/models/order_list.dart';
 import 'package:cishop/models/product_list.dart';
 import 'package:cishop/pages/cart_page.dart';
+import 'package:cishop/pages/orders_page.dart';
 import 'package:cishop/pages/product_detail_page.dart';
 import 'package:cishop/pages/products_overview_page.dart';
 import 'package:cishop/utils/app_routes.dart';
@@ -25,6 +27,9 @@ class MyApp extends StatelessWidget {
         ChangeNotifierProvider(
           create: (_) => Cart(),
         ),
+        ChangeNotifierProvider(
+          create: (_) => OrderList(),
+        ),
       ],
       child: MaterialApp(
         title: 'Flutter Demo',
@@ -33,11 +38,12 @@ class MyApp extends StatelessWidget {
               .copyWith(secondary: Colors.deepOrange),
           fontFamily: 'Lato',
         ),
-        home: const ProductsOverviewPage(),
         debugShowCheckedModeBanner: false,
         routes: {
+          AppRoutes.HOME: (ctx) => const ProductsOverviewPage(),
           AppRoutes.PRODUCT_DETAIL: (ctx) => const ProductDetailPage(),
           AppRoutes.CART: (ctx) => const CartPage(),
+          AppRoutes.ORDERS: (ctx) => const OrdersPage(),
         },
       ),
     );
