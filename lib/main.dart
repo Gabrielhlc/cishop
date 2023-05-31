@@ -4,6 +4,7 @@ import 'package:cishop/pages/cart_page.dart';
 import 'package:cishop/pages/orders_page.dart';
 import 'package:cishop/pages/product_detail_page.dart';
 import 'package:cishop/pages/products_overview_page.dart';
+import 'package:cishop/pages/products_page.dart';
 import 'package:cishop/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -44,6 +45,7 @@ class MyApp extends StatelessWidget {
           AppRoutes.PRODUCT_DETAIL: (ctx) => const ProductDetailPage(),
           AppRoutes.CART: (ctx) => const CartPage(),
           AppRoutes.ORDERS: (ctx) => const OrdersPage(),
+          AppRoutes.PRODUCTS: (ctx) => const ProductsPage(),
         },
       ),
     );
