@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../models/product_list.dart';
 import '../models/product.dart';
+
+import '../utils/app_routes.dart';
 
 class ProductItem extends StatelessWidget {
   final Product product;
@@ -18,12 +22,44 @@ class ProductItem extends StatelessWidget {
         child: Row(
           children: <Widget>[
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                Navigator.of(context).pushNamed(
+                  AppRoutes.PRODUCT_FORM,
+                  arguments: product,
+                );
+              },
               color: Theme.of(context).colorScheme.primary,
               icon: const Icon(Icons.edit),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                showDialog<bool>(
+                  context: context,
+                  builder: (ctx) => AlertDialog(
+                    title: const Text('Tem certeza'),
+                    content: const Text('Deseja deletar o produto?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(false);
+                        },
+                        child: const Text('Não'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.of(context).pop(true);
+                        },
+                        child: const Text('Sim'),
+                      ),
+                    ],
+                  ),
+                ).then((value) {
+                  if (value ?? false) {
+                    Provider.of<ProductList>(context, listen: false)
+                        .removeProduct(product);
+                  }
+                });
+              },
               color: Theme.of(context).colorScheme.error,
               icon: const Icon(Icons.delete),
             ),
