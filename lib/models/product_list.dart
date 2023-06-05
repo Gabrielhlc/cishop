@@ -1,10 +1,9 @@
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
+import 'dart:convert';
 import 'dart:math';
-
-import 'package:cishop/data/dummy_data.dart';
 import 'package:http/http.dart' as http;
+
+import '../data/dummy_data.dart';
 
 import 'product.dart';
 
@@ -21,8 +20,8 @@ class ProductList with ChangeNotifier {
     return _items.length;
   }
 
-  Future<void> _addProduct(Product product) {
-    final future = http.post(
+  Future<void> _addProduct(Product product) async {
+    final response = await http.post(
       Uri.parse('$_baseUrl/products.json'),
       body: jsonEncode(
         {
@@ -35,23 +34,19 @@ class ProductList with ChangeNotifier {
       ),
     );
 
-    return future.then<void>(
-      (response) {
-        final id = jsonDecode(response.body)['name'];
+    final id = jsonDecode(response.body)['name'];
 
-        _items.add(
-          Product(
-            id: id,
-            name: product.name,
-            description: product.description,
-            price: product.price,
-            imageUrl: product.imageUrl,
-            isFavorite: product.isFavorite,
-          ),
-        );
-        notifyListeners();
-      },
+    _items.add(
+      Product(
+        id: id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+        isFavorite: product.isFavorite,
+      ),
     );
+    notifyListeners();
   }
 
   Future<void> saveProduct(Map<String, Object> data) {

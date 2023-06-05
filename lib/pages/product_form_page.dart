@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:cishop/models/product_list.dart';
-
+import '../models/product_list.dart';
 import '../models/product.dart';
 
 class ProductFormPage extends StatefulWidget {
@@ -19,7 +18,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
   final _imageUrlFocus = FocusNode();
   final _imageUrlController = TextEditingController();
 
-  final _formkey = GlobalKey<FormState>();
+  final _formKey = GlobalKey<FormState>();
   final _formData = Map<String, Object>();
 
   bool _isLoading = false;
@@ -73,25 +72,41 @@ class _ProductFormPageState extends State<ProductFormPage> {
     _imageUrlFocus.dispose();
   }
 
-  void _submitForm() {
-    final isValid = _formkey.currentState?.validate() ?? false;
+  Future<void> _submitForm() async {
+    final isValid = _formKey.currentState?.validate() ?? false;
 
     if (!isValid) {
       return;
     }
 
-    _formkey.currentState?.save();
+    _formKey.currentState?.save();
 
-    setState(() {
-      _isLoading = true;
-    });
+    setState(() => _isLoading = true);
 
-    Provider.of<ProductList>(context, listen: false)
-        .saveProduct(_formData)
-        .then((value) {
-      setState(() => _isLoading = false);
+    try {
+      await Provider.of<ProductList>(
+        context,
+        listen: false,
+      ).saveProduct(_formData);
+
       Navigator.of(context).pop();
-    });
+    } catch (error) {
+      await showDialog<void>(
+        context: context,
+        builder: (ctx) => AlertDialog(
+          title: const Text('Ocorreu um erro!'),
+          content: const Text('Ocorreu um erro para salvar o produto.'),
+          actions: [
+            TextButton(
+              child: const Text('Ok'),
+              onPressed: () => Navigator.of(context).pop(),
+            ),
+          ],
+        ),
+      );
+    } finally {
+      setState(() => _isLoading = false);
+    }
   }
 
   @override
@@ -110,7 +125,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
           : Padding(
               padding: const EdgeInsets.all(15),
               child: Form(
-                key: _formkey,
+                key: _formKey,
                 child: ListView(
                   children: <Widget>[
                     TextFormField(
