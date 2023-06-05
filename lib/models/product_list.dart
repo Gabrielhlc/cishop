@@ -1,11 +1,15 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'dart:math';
 
 import 'package:cishop/data/dummy_data.dart';
+import 'package:http/http.dart' as http;
 
 import 'product.dart';
 
 class ProductList with ChangeNotifier {
+  final _baseUrl = 'https://cishop-65cba-default-rtdb.firebaseio.com';
   final List<Product> _items = dummyProducts;
 
   List<Product> get items => [..._items];
@@ -17,12 +21,40 @@ class ProductList with ChangeNotifier {
     return _items.length;
   }
 
-  void _addProduct(Product product) {
-    _items.add(product);
-    notifyListeners();
+  Future<void> _addProduct(Product product) {
+    final future = http.post(
+      Uri.parse('$_baseUrl/products.json'),
+      body: jsonEncode(
+        {
+          "name": product.name,
+          "description": product.description,
+          "price": product.price,
+          "imageUrl": product.imageUrl,
+          "isFavorite": product.isFavorite,
+        },
+      ),
+    );
+
+    return future.then<void>(
+      (response) {
+        final id = jsonDecode(response.body)['name'];
+
+        _items.add(
+          Product(
+            id: id,
+            name: product.name,
+            description: product.description,
+            price: product.price,
+            imageUrl: product.imageUrl,
+            isFavorite: product.isFavorite,
+          ),
+        );
+        notifyListeners();
+      },
+    );
   }
 
-  void saveProduct(Map<String, Object> data) {
+  Future<void> saveProduct(Map<String, Object> data) {
     final hasId = data['id'] != null;
 
     final newProduct = Product(
@@ -34,19 +66,21 @@ class ProductList with ChangeNotifier {
     );
 
     if (hasId) {
-      updateProduct(newProduct);
+      return _updateProduct(newProduct);
     } else {
-      _addProduct(newProduct);
+      return _addProduct(newProduct);
     }
   }
 
-  void updateProduct(Product product) {
+  Future<void> _updateProduct(Product product) {
     int index = _items.indexWhere((p) => p.id == product.id);
 
     if (index >= 0) {
       _items[index] = product;
       notifyListeners();
     }
+
+    return Future.value();
   }
 
   void removeProduct(Product product) {
