@@ -1,4 +1,6 @@
+import 'package:cishop/models/product_list.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 import 'dart:math';
 
 import '../models/product.dart';
@@ -58,13 +60,9 @@ class _ProductFormPageState extends State<ProductFormPage> {
 
     _formkey.currentState?.save();
 
-    final newProduct = Product(
-      id: Random().nextDouble() as String,
-      name: _formData['name'] as String,
-      description: _formData['description'] as String,
-      price: _formData['price'] as double,
-      imageUrl: _formData['imageUrl'] as String,
-    );
+    Provider.of<ProductList>(context, listen: false).saveProduct(_formData);
+
+    Navigator.of(context).pop();
   }
 
   @override
