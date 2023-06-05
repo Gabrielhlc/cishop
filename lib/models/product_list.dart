@@ -3,13 +3,12 @@ import 'dart:convert';
 import 'dart:math';
 import 'package:http/http.dart' as http;
 
-import '../data/dummy_data.dart';
-
 import 'product.dart';
 
 class ProductList with ChangeNotifier {
-  final _baseUrl = 'https://cishop-65cba-default-rtdb.firebaseio.com';
-  final List<Product> _items = dummyProducts;
+  final _url = 'https://cishop-65cba-default-rtdb.firebaseio.com/products.json';
+
+  final List<Product> _items = [];
 
   List<Product> get items => [..._items];
 
@@ -20,9 +19,30 @@ class ProductList with ChangeNotifier {
     return _items.length;
   }
 
+  Future<void> loadProducts() async {
+    _items.clear();
+
+    final response = await http.get(Uri.parse(_url));
+    if (response.body == 'null') return;
+    Map<String, dynamic> data = jsonDecode(response.body);
+    data.forEach((productId, productData) {
+      _items.add(
+        Product(
+          id: productId,
+          name: productData['name'],
+          description: productData['description'],
+          price: productData['price'],
+          imageUrl: productData['imageUrl'],
+          isFavorite: productData['isFavorite'],
+        ),
+      );
+    });
+    notifyListeners();
+  }
+
   Future<void> _addProduct(Product product) async {
     final response = await http.post(
-      Uri.parse('$_baseUrl/products.json'),
+      Uri.parse(_url),
       body: jsonEncode(
         {
           "name": product.name,
