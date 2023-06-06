@@ -1,4 +1,3 @@
-import 'package:cishop/models/product_list.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
