@@ -1,19 +1,20 @@
-import 'package:cishop/models/order_list.dart';
-import 'package:cishop/models/product_list.dart';
-import 'package:cishop/pages/auth_page.dart';
-import 'package:cishop/pages/cart_page.dart';
-import 'package:cishop/pages/orders_page.dart';
-import 'package:cishop/pages/product_detail_page.dart';
-import 'package:cishop/pages/product_form_page.dart';
-import 'package:cishop/pages/products_overview_page.dart';
-import 'package:cishop/pages/products_page.dart';
-import 'package:cishop/utils/app_routes.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import '../models/order_list.dart';
+import '../models/product_list.dart';
 import 'models/auth.dart';
 import 'models/cart.dart';
+
+import '../pages/cart_page.dart';
+import '../pages/orders_page.dart';
+import '../pages/product_detail_page.dart';
+import '../pages/product_form_page.dart';
+import '../pages/products_page.dart';
+import '../pages/auth_or_home_page.dart';
+
+import '../utils/app_routes.dart';
 
 Future main() async {
   await dotenv.load(fileName: ".env");
@@ -28,16 +29,28 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider(
-          create: (_) => ProductList(),
+          create: (_) => Auth(),
+        ),
+        ChangeNotifierProxyProvider<Auth, ProductList>(
+          create: (_) => ProductList('', []),
+          update: (ctx, auth, previous) {
+            return ProductList(
+              auth.token ?? '',
+              previous?.items ?? [],
+            );
+          },
+        ),
+        ChangeNotifierProxyProvider<Auth, OrderList>(
+          create: (_) => OrderList('', []),
+          update: (ctx, auth, previous) {
+            return OrderList(
+              auth.token ?? '',
+              previous?.items ?? [],
+            );
+          },
         ),
         ChangeNotifierProvider(
           create: (_) => Cart(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => OrderList(),
-        ),
-        ChangeNotifierProvider(
-          create: (_) => Auth(),
         ),
       ],
       child: MaterialApp(
@@ -49,8 +62,7 @@ class MyApp extends StatelessWidget {
         ),
         debugShowCheckedModeBanner: false,
         routes: {
-          AppRoutes.AUTH: (ctx) => const AuthPage(),
-          AppRoutes.HOME: (ctx) => const ProductsOverviewPage(),
+          AppRoutes.AUTH_OR_HOME: (ctx) => const AuthOrHomePage(),
           AppRoutes.PRODUCT_DETAIL: (ctx) => const ProductDetailPage(),
           AppRoutes.CART: (ctx) => const CartPage(),
           AppRoutes.ORDERS: (ctx) => const OrdersPage(),
