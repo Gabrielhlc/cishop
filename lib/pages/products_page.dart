@@ -21,10 +21,11 @@ class ProductsPage extends StatelessWidget {
         title: const Text('Gerenciar Produtos'),
         actions: [
           IconButton(
-              onPressed: () {
-                Navigator.of(context).pushNamed(AppRoutes.PRODUCT_FORM);
-              },
-              icon: const Icon(Icons.add))
+            onPressed: () {
+              Navigator.of(context).pushNamed(AppRoutes.PRODUCT_FORM);
+            },
+            icon: const Icon(Icons.add),
+          )
         ],
       ),
       drawer: const AppDrawer(),
